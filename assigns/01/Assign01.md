@@ -25,7 +25,7 @@ programmer.
 
    Obtain the source program provided by the instructor and place it in your repository:
 
-https://ats-lang.github.io/FROZEN000/DOCUMENT/INT2PROGINATS/HTML/INT2PROGINATS-BOOK-onechunk.html#example-the-eight-queens-puzzle
+   https://ats-lang.github.io/FROZEN000/DOCUMENT/INT2PROGINATS/HTML/INT2PROGINATS-BOOK-onechunk.html#example-the-eight-queens-puzzle
 
 3. **Use AI to translate the program**
 
