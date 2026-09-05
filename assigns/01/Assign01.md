@@ -1,7 +1,7 @@
 # Assignment #1
 GitHub Repository and AI-Assisted Code Translation
 
-# Due time: 11:59PM, the 8th of September, 2026
+## Due time: 11:59PM, the 8th of September, 2026
 
 ## Attention
 
