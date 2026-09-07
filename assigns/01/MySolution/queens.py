@@ -1,7 +1,7 @@
 """Python 3 translation of the ATS eight-queens program in queens.dats.
 
-This first draft follows the ATS control flow as closely as possible,
-including tail-recursive search.
+The helper functions follow the ATS code closely. `search` is an equivalent
+loop because Python does not perform tail-call optimization.
 """
 
 N = 8
@@ -97,24 +97,38 @@ def safety_test2(i0, j0, bd, i):
         return True
 
 
-def search(bd, i, j, nsol):
-    if j < N:
-        test = safety_test2(i, j, bd, i - 1)
-        if test:
-            bd1 = board_set(bd, i, j)
-            if i + 1 == N:
-                print("Solution #", nsol + 1, ":\n\n", sep="", end="")
-                print_board(bd1)
-                return search(bd, i, j + 1, nsol + 1)
+def search(bd, i, j, nsol, verbose=True, solutions=None):
+    """Same DFS as the ATS version, written as a loop.
+
+    ATS compiles the tail-recursive `search` into jumps. Python does not
+    optimize tail calls, so a literal recursive translation hits
+    RecursionError before finishing all 92 solutions.
+    """
+    while True:
+        if j < N:
+            test = safety_test2(i, j, bd, i - 1)
+            if test:
+                bd1 = board_set(bd, i, j)
+                if i + 1 == N:
+                    if verbose:
+                        print("Solution #", nsol + 1, ":\n\n", sep="", end="")
+                        print_board(bd1)
+                    if solutions is not None:
+                        solutions.append(bd1)
+                    j = j + 1
+                    nsol = nsol + 1
+                else:
+                    bd = bd1
+                    i = i + 1
+                    j = 0
             else:
-                return search(bd1, i + 1, 0, nsol)
+                j = j + 1
         else:
-            return search(bd, i, j + 1, nsol)
-    else:
-        if i > 0:
-            return search(bd, i - 1, board_get(bd, i - 1) + 1, nsol)
-        else:
-            return nsol
+            if i > 0:
+                j = board_get(bd, i - 1) + 1
+                i = i - 1
+            else:
+                return nsol
 
 
 def main():
