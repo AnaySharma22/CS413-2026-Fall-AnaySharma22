@@ -1,6 +1,6 @@
 # AI transcript
 
-AI system: Cursor (Grok 4.6 coding assistant), used in this repository session.
+AI system: Cursor used in this repository session.
 
 Unrelated conversation (Lab 1 Git/GitHub, discount calculator) is omitted.
 
@@ -15,7 +15,7 @@ Constraints given to the assistant:
 - Keep the same DFS search order and printing style.
 - Place all assignment files under `assigns/01/MySolution`.
 
-The original source used is the textbook excerpt Hongwei posted on Piazza after the online code link was reported broken. That text matches the book functions (`board_get` else-branch is `~1`). It is not the older ATS2 `queens.dats` from GitHub, which used `else 0` and extra `main0` testing.
+The original source used is the textbook excerpt. That text matches the book functions (`board_get` else-branch is `~1`). It is not the older ATS2 `queens.dats` from GitHub, which used `else 0` and extra `main0` testing.
 
 ## Initial translation
 
@@ -42,16 +42,11 @@ The assistant’s correction: ATS compiles tail-recursive `search` to a local ju
 
 ## Other review notes (not all were bugs)
 
-- Book / Piazza text uses `else ~1` in `board_get`. An earlier GitHub `queens.dats` used `else 0`. After Hongwei posted the excerpt, the translation was corrected to `-1`.
+- Book / Piazza text uses `else ~1` in `board_get`. An earlier GitHub `queens.dats` used `else 0`. After the professor posted the excerpt, the translation was corrected to `-1`.
 - ATS `print! ("Solution #", nsol+1, ":\n\n")` concatenates arguments. Python `print` adds spaces unless `sep=""` is set.
 - When a solution is found, ATS continues with the *old* board `bd` and `j+1`, not `bd1`. The loop version keeps that.
 - Optional `verbose` / `solutions` arguments were added only so tests can collect boards without reprinting all 92; default `main()` behavior is unchanged.
 
-## Follow-up: instructor notes on source and tests
-
-Hongwei: you do not have to transcribe from a broken link; use the posted textbook text.
-
-Hongwei: first translate the source into Python. Then ask AI to generate tests for the **top-level functions**. Testing code is not part of the translation.
 
 Prompt used for tests:
 

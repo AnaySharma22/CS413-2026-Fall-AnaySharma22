@@ -1,8 +1,8 @@
 (*
 ** Example: The Eight-Queens Puzzle
 **
-** Source: Hongwei Xi, posted for CS413 Assignment 1
-** (textbook section; the online code link was broken).
+** Source: Professor's post on piazza
+** 
 *)
 
 #define N 8

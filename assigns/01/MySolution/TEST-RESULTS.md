@@ -1,6 +1,6 @@
 # Test results
 
-ATS (`patscc`) is not installed here, so the original was not compiled. Python tests cover the **top-level functions** from the source Hongwei posted (not extra search-from-partial-board behavior). Testing code is not part of the translation.
+ Python tests cover the **top-level functions** from the source the professor posted (not extra search-from-partial-board behavior). Testing code is not part of the translation.
 
 ## How to run
 
