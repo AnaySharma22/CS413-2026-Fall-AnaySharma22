@@ -1,6 +1,6 @@
 # Test results
 
-ATS (`patscc` / `atsopt`) is not installed in this environment, so the original program was not compiled here. The Python translation was checked against the behavior documented in *Introduction to Programming in ATS* (the first printed solution and the claim that there are 92 solutions) and against the `main0` assertion `nsol = 92` in `queens.dats`.
+ATS (`patscc`) is not installed here, so the original was not compiled. Python tests cover the **top-level functions** from the source Hongwei posted (not extra search-from-partial-board behavior). Testing code is not part of the translation.
 
 ## How to run
 
@@ -9,55 +9,25 @@ python queens.py
 python test_queens.py
 ```
 
-`python queens.py` prints the diagonal starter board, then all 92 solutions, and asserts that the count is 92.
+## Tests of top-level functions
 
-## Test cases
-
-### 1. Normal input
-
-Search from board `(0, 0, 0, 0, 0, 0, 0, 0)` at row 0, column 0, as in ATS `main0`.
-
-| Check | Expected | Python result |
-| --- | --- | --- |
-| Number of solutions | 92 | 92 |
-| First solution | `(0, 4, 7, 5, 2, 6, 1, 3)` matching the book board | match |
-
-Book first solution:
-
-```text
-Q . . . . . . .
-. . . . Q . . .
-. . . . . . . Q
-. . . . . Q . .
-. . Q . . . . .
-. . . . . . Q .
-. Q . . . . . .
-. . . Q . . . .
-```
-
-### 2. Boundary / unusual cases
-
-| Case | Expected | Python result |
-| --- | --- | --- |
-| `board_get(bd, -1)` and `board_get(bd, 8)` | `0` (ATS `queens.dats` else-branch) | 0 |
-| Two queens in the same column | `safety_test1` is false | false |
-| Two queens on the same diagonal | `safety_test1` is false | false |
-| `safety_test2(..., i=-1)` | true (no earlier rows) | true |
-
-The original ATS `search` never starts from a completed board; these cases exercise helpers the search relies on at the edges of the DFS.
-
-### 3. Additional test
-
-Every one of the 92 boards has eight distinct columns, and `safety_test1` holds for every pair of queens.
-
-| Check | Expected | Python result |
-| --- | --- | --- |
-| Unique boards | 92 | 92 |
-| All boards legal | all safe | all safe |
-
-### 4. Print format
-
-`print_board((0, 1, 2, 3, 4, 5, 6, 7))` matches the eight-line example from the book (queen on the main diagonal, `". "` / `"Q "` cells, blank line after the board).
+| Function | Kind | Case | Result |
+| --- | --- | --- | --- |
+| `print_dots` | boundary | `i = 0` prints nothing | pass |
+| `print_dots` | normal | `i = 3` prints `". . . "` | pass |
+| `print_row` | normal | column 0 and column 7 rows | pass |
+| `print_board` | normal | diagonal board from the textbook | pass |
+| `board_get` | normal | each of the eight tuple fields | pass |
+| `board_get` | boundary | index `-1` and `8` return `-1` (`~1`) | pass |
+| `board_set` | normal | set row 3 to column 5 | pass |
+| `board_set` | boundary | invalid row returns the same tuple | pass |
+| `safety_test1` | normal | safe placement is true | pass |
+| `safety_test1` | unusual | same column or same diagonal is false | pass |
+| `safety_test2` | boundary | `i = -1` is true | pass |
+| `safety_test2` | normal | conflict / no conflict with an earlier queen | pass |
+| `search` | normal | empty board → 92 solutions; first board matches the book | pass |
+| `search` | boundary | `j = N` on row 0 returns the incoming `nsol` | pass |
+| `search` | additional | all 92 boards are pairwise safe | pass |
 
 ## Command log
 
@@ -65,4 +35,4 @@ Every one of the 92 boards has eight distinct columns, and `safety_test1` holds 
 python test_queens.py
 ```
 
-Result: `Ran 4 tests in 0.039s` — `OK`
+Result: `Ran 18 tests in 0.038s` — `OK`

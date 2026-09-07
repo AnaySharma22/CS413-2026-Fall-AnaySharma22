@@ -50,7 +50,7 @@ def board_get(bd, i):
     elif i == 7:
         return bd[7]
     else:
-        return 0
+        return -1  # ATS ~1
 
 
 def board_set(bd, i, j):
@@ -83,8 +83,8 @@ def board_set(bd, i, j):
         return bd
 
 
-def safety_test1(i0, j0, i, j):
-    return j0 != j and abs(i0 - i) != abs(j0 - j)
+def safety_test1(i0, j0, i1, j1):
+    return j0 != j1 and abs(i0 - i1) != abs(j0 - j1)
 
 
 def safety_test2(i0, j0, bd, i):

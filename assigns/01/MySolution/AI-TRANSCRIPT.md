@@ -15,11 +15,7 @@ Constraints given to the assistant:
 - Keep the same DFS search order and printing style.
 - Place all assignment files under `assigns/01/MySolution`.
 
-The original source used is:
-
-https://raw.githubusercontent.com/githwxi/ATS-Postiats/master/doc/BOOK/INT2PROGINATS/CODE/CHAP_FUNCTION/queens.dats
-
-which matches the book example plus `main0` testing (`print_board` of the diagonal, `search` from an empty board, `assertloc (nsol = 92)`).
+The original source used is the textbook excerpt Hongwei posted on Piazza after the online code link was reported broken. That text matches the book functions (`board_get` else-branch is `~1`). It is not the older ATS2 `queens.dats` from GitHub, which used `else 0` and extra `main0` testing.
 
 ## Initial translation
 
@@ -46,16 +42,25 @@ The assistant’s correction: ATS compiles tail-recursive `search` to a local ju
 
 ## Other review notes (not all were bugs)
 
-- Book text uses `else ~1` in `board_get`; the official `queens.dats` uses `else 0`. The translation follows `queens.dats`.
+- Book / Piazza text uses `else ~1` in `board_get`. An earlier GitHub `queens.dats` used `else 0`. After Hongwei posted the excerpt, the translation was corrected to `-1`.
 - ATS `print! ("Solution #", nsol+1, ":\n\n")` concatenates arguments. Python `print` adds spaces unless `sep=""` is set.
 - When a solution is found, ATS continues with the *old* board `bd` and `j+1`, not `bd1`. The loop version keeps that.
 - Optional `verbose` / `solutions` arguments were added only so tests can collect boards without reprinting all 92; default `main()` behavior is unchanged.
 
+## Follow-up: instructor notes on source and tests
+
+Hongwei: you do not have to transcribe from a broken link; use the posted textbook text.
+
+Hongwei: first translate the source into Python. Then ask AI to generate tests for the **top-level functions**. Testing code is not part of the translation.
+
+Prompt used for tests:
+
+> Generate Python unit tests for the top-level functions in queens.py (print_dots, print_row, print_board, board_get, board_set, safety_test1, safety_test2, search). Include a normal case, a boundary or unusual case, and one additional test. Do not change the translation’s algorithm.
+
 ## Manual changes after review
 
 1. Replaced recursive `search` with an equivalent loop (required for Python).
-2. Added `verbose` and `solutions` parameters for testing.
-3. Wrote `test_queens.py` and `TEST-RESULTS.md`.
-4. Wrote this transcript and the README reflection.
-
-No other algorithmic changes were made (still 8-tuples, still the same DFS, still the same safety tests).
+2. Set `board_get`’s else-branch to `-1` to match `~1` in the posted ATS.
+3. Added `verbose` / `solutions` only so tests can call `search` without printing 92 boards.
+4. Replaced end-to-end-only tests with tests of each top-level function.
+5. Wrote this transcript and the README reflection.

@@ -6,10 +6,10 @@ This directory contains an ATS implementation of the eight-queens puzzle and a P
 
 ## Files
 
-- `queens.dats` — original source from Hongwei Xi, *Introduction to Programming in ATS* (ATS2 book code: `CHAP_FUNCTION/queens.dats`).
-- `queens.py` — Python 3 translation.
-- `test_queens.py` — unit tests for the translation.
-- `TEST-RESULTS.md` — test cases, expected values, and results.
+- `queens.dats` — original ATS from the textbook excerpt Hongwei posted (the online code link was broken).
+- `queens.py` — Python 3 translation of those functions.
+- `test_queens.py` — AI-generated tests of the top-level functions (not part of the translation).
+- `TEST-RESULTS.md` — test cases and results.
 - `AI-TRANSCRIPT.md` — prompts and review notes from the AI session.
 
 ## How to run
@@ -28,7 +28,7 @@ patscc -o queens queens.dats
 ./queens
 ```
 
-`patscc` was not available on the machine used for this assignment, so the original was verified against the published first solution and the `nsol = 92` check in `main0`.
+`patscc` was not available on the machine used for this assignment, so the original was checked against the textbook’s first printed solution and the stated total of 92 solutions.
 
 ## Source
 
@@ -40,6 +40,6 @@ The AI (Cursor, with the Grok 4.6 coding assistant) was useful as a first-pass t
 
 The important mistake was semantic, not syntactic. ATS turns tail-recursive `search` into a loop. Python does not. The first translation therefore printed the documented first solution and then died with `RecursionError` before finishing the 92 boards. Trusting the draft without running it would have looked plausible: the first board matched the textbook, the helpers looked right, and `main` still asserted `nsol == 92`. The crash only showed up when the program was actually executed.
 
-To check the translation I had to understand the original DFS, not just the chess rules. When a queen is placed on the last row, `search` continues from the *previous* board and `j+1`, not from `bd1`. `board_get` on an invalid index returns `0` in `queens.dats` (the book text uses `~1`). Print format matters: ATS `print!` concatenates pieces, so `"Solution #"` plus a number should not pick up extra spaces from Python's default `print`. I also needed the well-known count of 92 solutions and the first printed board from the book, because I could not compile ATS here.
+To check the translation I had to understand the original DFS, not just the chess rules. When a queen is placed on the last row, `search` continues from the *previous* board and `j+1`, not from `bd1`. `board_get` on an invalid index returns `~1` (Python `-1`) in the text Hongwei posted. Print format matters: ATS `print!` concatenates pieces, so `"Solution #"` plus a number should not pick up extra spaces from Python's default `print`. I also needed the count of 92 solutions and the first printed board from the book, because I could not compile ATS here.
 
-The generated version could not have been trusted without testing. After the tail-call fix, tests covered a normal full search, edge cases on `board_get` and safety, and an independent check that every reported board is a legal placement. AI shortened the mechanical rewrite and helped keep the control flow aligned with ATS. It did not remove the need to know what the original program does, to watch for language differences, or to treat the output as a draft until it was run and compared.
+The generated version could not have been trusted without testing. After the tail-call fix, tests (generated separately, as Hongwei asked) cover the top-level functions: printers, `board_get` / `board_set`, both safety tests, and `search`. AI shortened the mechanical rewrite and helped keep the control flow aligned with ATS. It did not remove the need to know what the original program does, to watch for language differences, or to treat the output as a draft until it was run and compared.

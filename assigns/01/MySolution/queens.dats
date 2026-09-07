@@ -1,78 +1,32 @@
 (*
-** Copyright (C) 2011 Hongwei Xi, ATS Trustful Software, Inc.
+** Example: The Eight-Queens Puzzle
 **
-** Permission is hereby granted, free of charge, to any person
-** obtaining a copy of this software and associated documentation
-** files (the "Software"), to deal in the Software without
-** restriction, including without limitation the rights to use,
-** copy, modify, merge, publish, distribute, sublicense, and/or sell
-** copies of the Software, and to permit persons to whom the
-** Software is furnished to do so, subject to the following
-** conditions:
-**
-** The above copyright notice and this permission notice shall be
-** included in all copies or substantial portions of the Software.
-**
-** THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-** EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-** OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-** NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
-** HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
-** WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-** FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-** OTHER DEALINGS IN THE SOFTWARE.
+** Source: Hongwei Xi, posted for CS413 Assignment 1
+** (textbook section; the online code link was broken).
 *)
 
-(* ****** ****** *)
-
-(*
-** Example: Eight Queens Puzzle
-**
-** Author: Hongwei Xi (hwxi AT cs DOT bu DOT edu)
-** Time: January, 2011
-*)
-
-(* ****** ****** *)
-
-(*
-** Ported to ATS2 by Hongwei Xi (gmhwxiATgmailDOTcom)
-** Time: March 24, 2013
-*)
-
-(* ****** ****** *)
-//
-#include
-"share/atspre_staload.hats"
-//
-(* ****** ****** *)
-
-#define N 8 // HX: this should not be changed!
-
-(* ****** ****** *)
+#define N 8
 
 typedef int8 =
 (
   int, int, int, int, int, int, int, int
 ) // end of [int8]
 
-fun print_dots
-  (i: int): void =
+fun print_dots (i: int): void =
   if i > 0 then (print ". "; print_dots (i-1)) else ()
 // end of [print_dots]
 
-fun print_row
-  (i: int): void = begin
-  print_dots (i); print "Q "; print_dots (N-i-1); print '\n';
-end // end of [print_row]
+fun print_row (i: int): void =
+(
+  print_dots (i); print "Q "; print_dots (N-i-1); print "\n";
+) // end of [print_row]
 
-fun print_board
-  (bd: int8): void = begin
+fun print_board (bd: int8): void =
+(
   print_row (bd.0); print_row (bd.1); print_row (bd.2); print_row (bd.3);
   print_row (bd.4); print_row (bd.5); print_row (bd.6); print_row (bd.7);
   print_newline ()
-end // end of [print_board]
-
-(* ****** ****** *)
+) // end of [print_board]
 
 fun board_get
   (bd: int8, i: int): int =
@@ -84,7 +38,7 @@ fun board_get
   else if i = 5 then bd.5
   else if i = 6 then bd.6
   else if i = 7 then bd.7
-  else 0 // end of [if]
+  else ~1 // end of [if]
 // end of [board_get]
 
 fun board_set
@@ -110,21 +64,17 @@ in
   end else bd // end of [if]
 end // end of [board_set]
 
-(* ****** ****** *)
-
-fun
-safety_test1
+fun safety_test1
 (
-  i0: int, j0: int, i: int, j: int
+  i0: int, j0: int, i1: int, j1: int
 ) : bool =
 (*
 ** [abs]: the absolute value function
 *)
-  j0 <> j andalso abs (i0 - i) <> abs (j0 - j)
+  j0 != j1 andalso abs (i0 - i1) != abs (j0 - j1)
 // end of [safety_test1]
 
-fun
-safety_test2
+fun safety_test2
 (
   i0: int, j0: int, bd: int8, i: int
 ) : bool =
@@ -134,8 +84,6 @@ safety_test2
     // end of [if]
   else true // end of [if]
 // end of [safety_test2]
-
-(* ****** ****** *)
 
 fun search
 (
@@ -173,21 +121,3 @@ else (
 ) (* end of [else] *)
 //
 ) (* end of [search] *)
-
-(* ****** ****** *)
-
-implement
-main0 () = {
-//
-val () =
-print_board @(0, 1, 2, 3, 4, 5, 6, 7)
-//
-val nsol = search ((0, 0, 0, 0, 0, 0, 0, 0), 0, 0, 0)
-//
-val ((*void*)) = assertloc (nsol = 92)
-//
-} (* end of [main0] *)
-
-(* ****** ****** *)
-
-(* end of [queens.dats] *)
