@@ -20,3 +20,6 @@ programmer.
 
 ## Tasks
 
+In the file lambda0.py, there is a substitution-based implementation
+of an interpreter for a functional programming language (LAMBDA0) that
+extends Church's lambda-calculus with some basic constructs.
