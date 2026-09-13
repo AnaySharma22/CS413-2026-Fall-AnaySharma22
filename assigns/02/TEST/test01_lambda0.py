@@ -12,7 +12,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from lambda0 import (
-    T0Mint, T0Mbtf, T0Mstr, T0Mvar, T0Mlam, T0Mapp, T0Mif0, T0Mop1, T0Mop2,
+    T0Mint, T0Mbtf, T0Mstr, T0Mvar, T0Mlam, T0Mfix, T0Mapp, T0Mif0, T0Mop1, T0Mop2,
     t0erm_cbv_evaluate0,
 )
 
@@ -95,6 +95,38 @@ class TestCBVEvaluate(unittest.TestCase):
         )
         with self.assertRaises(ZeroDivisionError):
             t0erm_cbv_evaluate0(term)
+
+    def test_fix_application(self):
+        identity = T0Mfix("f", "x", T0Mvar("x"))
+        term = T0Mapp(identity, T0Mop2("+", T0Mint(3), T0Mint(4)))
+        self.assertEqual(t0erm_cbv_evaluate0(term), T0Mint(7))
+
+    def test_fix_recursion(self):
+        # f(flag) = if flag then 1 + f(false) else 0.
+        function = T0Mfix("f", "flag", T0Mif0(
+            T0Mvar("flag"),
+            T0Mop2("+", T0Mint(1), T0Mapp(T0Mvar("f"), T0Mbtf(False))),
+            T0Mint(0),
+        ))
+        for flag, expected in [(False, 0), (True, 1)]:
+            with self.subTest(flag=flag):
+                self.assertEqual(
+                    t0erm_cbv_evaluate0(T0Mapp(function, T0Mbtf(flag))),
+                    T0Mint(expected),
+                )
+
+    def test_fix_evaluates_unused_argument(self):
+        term = T0Mapp(
+            T0Mfix("f", "x", T0Mint(42)),
+            T0Mop2("/", T0Mint(1), T0Mint(0)),
+        )
+        with self.assertRaises(ZeroDivisionError):
+            t0erm_cbv_evaluate0(term)
+
+    def test_fix_preserves_inner_binding(self):
+        function = T0Mfix("f", "x", T0Mlam("f", T0Mvar("f")))
+        term = T0Mapp(T0Mapp(function, T0Mint(7)), T0Mint(9))
+        self.assertEqual(t0erm_cbv_evaluate0(term), T0Mint(9))
 
     def test_application_requires_lambda(self):
         with self.assertRaises(TypeError):

@@ -3,9 +3,12 @@
 # playing with lambda calculus
 ########################################################################
 ########################################################################
+#
 type nint = int
 type sint = int
 type strn = str
+type tvar = strn
+#
 ########################################################################
 from abc import ABC
 from enum import Enum
@@ -21,14 +24,20 @@ type t0erm = T0M000
 ########################################################################
 @dataclass
 class T0Mvar(T0M000):
-    arg1: strn
+    arg1: tvar
     ctag = "T0Mvar"
 ########################################################################
 @dataclass
 class T0Mlam(T0M000):
-    arg1: strn
+    arg1: tvar
     arg2: t0erm
     ctag = "T0Mlam"
+@dataclass
+class T0Mfix(T0M000):
+    arg1: tvar
+    arg2: tvar
+    arg3: t0erm
+    ctag = "T0Mfix"
 ########################################################################
 @dataclass
 class T0Mapp(T0M000):
@@ -68,14 +77,21 @@ class T0Mif0(T0M000):
     arg3: t0erm
     ctag = "T0Mif0"
 ########################################################################
-EX_I = T0Mlam("x", T0Mvar("x"))
-print(f"EX_I = {EX_I}")
 ########################################################################
-EX_K = T0Mlam("x", T0Mlam("y", T0Mvar("x")))
-print(f"EX_K = {EX_K}")
+@dataclass
+class T0Mpair(T0M000): # pair
+    arg1: t0erm
+    arg2: t0erm
+    ctag = "T0Mpair"
+@dataclass
+class T0Mpfst(T0M000): # fst projection
+    arg1: t0erm
+    ctag = "T0Mpfst"
+@dataclass
+class T0Mpsnd(T0M000): # 2nd projection
+    arg1: t0erm
+    ctag = "T0Mpsnd"
 ########################################################################
-EX_S = T0Mlam("x", T0Mlam("y", T0Mlam("z", T0Mapp(T0Mapp(T0Mvar("x"), T0Mvar("z")), T0Mapp(T0Mvar("y"), T0Mvar("z"))))))
-print(f"EX_S = {EX_S}")
 ########################################################################
 def t0erm_size(term: t0erm) -> sint:
     if False:
@@ -90,6 +106,8 @@ def t0erm_size(term: t0erm) -> sint:
         return 1
     elif isinstance(term, T0Mlam):
         return 1 + t0erm_size(term.arg2)
+    elif isinstance(term, T0Mfix):
+        return 1 + t0erm_size(term.arg3)
     elif isinstance(term, T0Mapp):
         return 1 + t0erm_size(term.arg1) + t0erm_size(term.arg2)
     elif isinstance(term, T0Mop1):
@@ -100,10 +118,6 @@ def t0erm_size(term: t0erm) -> sint:
         return 1 + t0erm_size(term.arg1) + t0erm_size(term.arg2) + t0erm_size(term.arg3)
     else:
         raise TypeError(f"t0erm_size({term})")
-########################################################################
-print(f"size(EX_I) = {t0erm_size(EX_I)}")
-print(f"size(EX_K) = {t0erm_size(EX_K)}")
-print(f"size(EX_S) = {t0erm_size(EX_S)}")
 ########################################################################
 X = TypeVar("X")
 type fvset = frozenset[strn]
@@ -121,6 +135,8 @@ def t0erm_fvset(term: t0erm) -> fvset:
         return frozenset([term.arg1])
     elif isinstance(term, T0Mlam):
         return t0erm_fvset(term.arg2) - {term.arg1}
+    elif isinstance(term, T0Mfix):
+        return t0erm_fvset(term.arg3) - {term.arg1, term.arg2}
     elif isinstance(term, T0Mapp):
         return (t0erm_fvset(term.arg1) | t0erm_fvset(term.arg2))
     elif isinstance(term, T0Mop1):
@@ -132,12 +148,6 @@ def t0erm_fvset(term: t0erm) -> fvset:
     else:
         raise TypeError(f"t0erm_fvset({term})")
 ########################################################################
-print(f"fvset(EX_I) = {t0erm_fvset(EX_I)}")
-print(f"fvset(EX_K) = {t0erm_fvset(EX_K)}")
-print(f"fvset(EX_S) = {t0erm_fvset(EX_S)}")        
-########################################################################
-#
-type tvar = strn
 #
 # HX-2026-08-25:
 # [tsub] is assumed to be closed;
@@ -162,6 +172,15 @@ def t0erm_subst0\
                 return term
             else:
                 return T0Mlam(x1, subst0(term.arg2))
+        elif isinstance(term, T0Mfix):
+            f0 = term.arg1
+            x1 = term.arg2
+            if x0 == f0:
+                return term
+            elif x0 == x1:
+                return term
+            else:
+                return T0Mfix(f0, x1, subst0(term.arg3))
         elif isinstance(term, T0Mapp):
             return T0Mapp(subst0(term.arg1), subst0(term.arg2))
         elif isinstance(term, T0Mop1):
@@ -184,13 +203,18 @@ def t0erm_cbv_evaluate0(term: t0erm) -> t0erm:
     elif isinstance(term, T0Mbtf): return term
     elif isinstance(term, T0Mstr): return term
     elif isinstance(term, T0Mlam): return term
+    elif isinstance(term, T0Mfix): return term
     elif isinstance(term, T0Mapp):
         t1 = t0erm_cbv_evaluate0(term.arg1)
         t2 = t0erm_cbv_evaluate0(term.arg2)
         if isinstance(t1, T0Mlam):
             return t0erm_cbv_evaluate0(t0erm_subst0(t1.arg2, t1.arg1, t2))
+        elif isinstance(t1, T0Mfix):
+            # Substitute the argument, then bind the recursive name to t1.
+            return t0erm_cbv_evaluate0\
+                (t0erm_subst0(t0erm_subst0(t1.arg3, t1.arg2, t2), t1.arg1, t1))
         else:
-            raise TypeError(f"t0erm_cbv_evaluate0: application expects a lambda ({t1})")
+            raise TypeError(f"t0erm_cbv_evaluate0: application expects a lam/fix ({t1})")
     elif isinstance(term, T0Mif0):
         t1 = t0erm_cbv_evaluate0(term.arg1)
         if isinstance(t1, T0Mbtf):
