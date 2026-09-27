@@ -91,4 +91,3 @@ I did not ask for a finished specification in one prompt. I went through the sta
 - Reworded A1 so candidate `lam` / `fix` / `let` text is sample-only.
 - Tightened FR-08, FR-09, and FR-13 against the Sep 22 error and scope rules.
 - Left U1 unresolved instead of inventing a timeout.
-- Wrote this transcript from the section-by-section thread, not from a single “do the assignment” prompt.
