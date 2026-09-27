@@ -3,7 +3,14 @@
 Student: Anay Sharma
 
 Source brief: `assigns/03/LAMBDA-UI-informal-requirements.md`  
-Status: first-version specification. No stakeholder answers have been received beyond that brief. Assumptions below are proposals, not stakeholder decisions.
+Course notes used for context, not as stakeholder decisions:
+
+- `lectures/lecture-09-22/lambda-concrete-syntax-requirements.md` (draft syntax; editor integration is deferred there)
+- `lectures/lecture-09-22/README.md` (current interpreter still takes Python ASTs; no parser yet)
+- `lectures/lecture-09-15/compiler_development.md` (compiler phases stay a separate project)
+- `lectures/lecture-09-17/README.00` (agile: settle a small first version before adding more)
+
+Status: first-version specification. No stakeholder answers have been received beyond the brief. Assumptions below are proposals, not stakeholder decisions.
 
 ## 1. Purpose
 
@@ -28,7 +35,7 @@ Provide a local, browser-based environment where a course participant can edit a
 
 **Outside version 1**
 
-- Implementing or changing the LAMBDA compiler or its concrete syntax.
+- Implementing or changing the LAMBDA compiler or its concrete syntax. The Sep 15 plan treats language definition and compiler phases as their own project. The Sep 22 syntax draft also defers editor integration, so this environment does not become that parser.
 - A public website, accounts, authentication, or several people editing one program at the same time.
 - Sharing a test collection with the class. The brief says this can wait.
 - A full development environment (version control, debugging, project search).
@@ -42,8 +49,8 @@ The environment sends source text and a mode (`check` or `run`) and displays wha
 No replies have been received. Each item states why it matters and how this specification proceeds.
 
 **Q1. What source notation does version 1 accept?**  
-The brief says programs are still discussed as Python ASTs and that concrete syntax is unsettled. The editor, examples, file import, and tests all depend on the text the compiler accepts.  
-**Assumption A1:** Version 1 sends the editor buffer as text. The compiler interface defines the notation. Until a notation is fixed, only the sample backend is used, and the page states that.
+The brief says programs are still discussed as Python ASTs and that concrete syntax is unsettled. The Sep 22 notes agree: `lambda1.py` still builds ASTs in Python, and `lambda-concrete-syntax-requirements.md` is labeled “Draft for discussion,” with spellings that are “examples for review, not an approved language specification.” That draft also lists editor integration as deferred (section 3). The editor, examples, file import, and tests all depend on the text the compiler accepts.  
+**Assumption A1:** Version 1 sends the editor buffer as text and does not choose the grammar. The compiler interface defines the notation. Until a notation is fixed, only the sample backend is used, and the page states that. Built-in examples may use the candidate forms from the Sep 22 notes (`lam`, `fix`, `let` … `end`) only as sample text, not as a claim that the syntax is approved.
 
 **Q2. Where should programs and tests live if there are no accounts?**  
 Refresh and a later session must not drop prepared examples, but the brief does not name a store.  
@@ -82,12 +89,12 @@ Priority: **M** = must for version 1, **S** = should, **W** = wait (not in versi
 | FR-05 | M | The user can save the current editor text under a name in the browser profile and open that saved text again after a reload and in a later visit with the same profile. |
 | FR-06 | M | The user can request Check. The environment sends the current editor text to the compiler in check mode and does not request execution. |
 | FR-07 | M | The user can request Run. The environment sends the current editor text in run mode. If the compiler reports a compile error, the environment does not present an execution result. |
-| FR-08 | M | After Check or Run, the page shows one of: a successful compile with no execution (Check), a successful execution value (Run), a compile error, a runtime failure, a cancellation, or an environment failure. These outcomes use different labels. |
-| FR-09 | M | When the compiler response includes a source location for a compile error, the environment indicates that location in the editor (selection or equivalent visible mark) as well as in the message text. |
+| FR-08 | M | After Check or Run, the page shows one of: a successful compile with no execution (Check), a successful execution value (Run), a compile or parse error, a runtime failure, a cancellation, or an environment failure. These outcomes use different labels. If the compiler separates a lexical or syntactic error from a runtime failure, the page keeps that separation (same split as lecture ERR-01). |
+| FR-09 | M | When a compile or parse error includes a one-based line and column, the environment shows that location in the message and marks it in the editor. Locations on runtime failures are not required; the Sep 22 syntax draft defers those (ERR-04). |
 | FR-10 | M | If the compiler cannot be contacted, the page labels the outcome as an environment failure, not as a compile error or a runtime failure, and the editor text remains available for a later attempt. |
 | FR-11 | M | While a Check or Run request is outstanding, the user can still edit text, load an example, and choose Cancel. Cancel asks the adapter to abandon that request. |
 | FR-12 | M | A displayed result names the editor text that was sent (for example a snapshot id or a “stale” marker). If the user edits the buffer after the request starts, the result stays tied to the sent text and is marked as not matching the current buffer. |
-| FR-13 | S | When the compiler response includes an AST or generated code, the user can open an inspector for that artifact. The inspector is closed by default and is omitted when the artifact is absent. |
+| FR-13 | S | When the compiler response includes an AST or generated code, the user can open an inspector for that artifact. The inspector is closed by default and is omitted when the artifact is absent. The page does not parse source itself; the Sep 22 notes defer editor integration and still evaluate ASTs inside the compiler. |
 | FR-14 | M | The user can create, rename, edit, and delete a named test. A test stores source text and an expectation: either an integer, a Boolean, or “compile rejection.” |
 | FR-15 | M | The user can run every saved test. The page shows a count of passed and failed tests and, for each failure, the test name, expectation, and actual outcome. A failure does not skip the remaining tests. |
 | FR-16 | M | Saved programs (FR-05) and the test collection (FR-14) are still present after the page is reloaded. |
@@ -151,12 +158,12 @@ These are future checks, not results from a built system.
 | FR-05 | “keep a program… and return to it later”; A2. |
 | FR-06 | “Sometimes I only want to check whether a program compiles”; A5. |
 | FR-07 | “At other times, I want to run it and see the answer”; A5. |
-| FR-08 | “A compilation error and a failure while running… should not look like the same thing.” |
-| FR-09 | “When the compiler reports where the problem occurred… find that place in the source.” |
+| FR-08 | Brief: compilation vs running must look different. Lecture 09-22 ERR-01: lexical/syntactic failures stay distinct from runtime failures. |
+| FR-09 | Brief: show where the problem occurred. Lecture 09-22 ERR-02 (line and column) and ERR-04 (runtime locations deferred). |
 | FR-10 | “If it cannot reach the compiler… not… their program is wrong”; “keep their work and try again.” |
 | FR-11 | “a way to stop it”; “page should remain usable while work is in progress”; A3. |
 | FR-12 | “which version produced the result I am seeing.” |
-| FR-13 | “inspect… AST or generated code… not… in the way” of a simple run. |
+| FR-13 | Brief: inspect AST or generated code without blocking a simple run. Lecture 09-22: parsing and evaluation stay in the compiler; editor integration is deferred there. |
 | FR-14 | “Keeping examples as tests”; integer, Boolean, or rejection; A4. |
 | FR-15 | “quick summary”; “enough detail”; “one troublesome test should not make the rest… useless.” |
 | FR-16 | “refreshing the page” must not drop prepared examples; “another session.” |
