@@ -20,11 +20,11 @@ I did not ask for a finished specification in one prompt. I went through the sta
 
 ## 2. Clarification questions
 
-**Me:** I need five to eight questions, and I should not invent answers from the instructor.
+**Me:** I need five to eight questions, and I should not invent answers from professor Hongwei.
 
 **Assistant:** Each question should say why the answer changes a requirement, then either an assumption labeled as mine or an unresolved item.
 
-**Me:** The biggest hole is syntax. The brief still talks about Python ASTs. I then read `lectures/lecture-09-22/README.md` and `lambda-concrete-syntax-requirements.md`. The README says there is still no parser. The syntax writeup says “Draft for discussion” and “not an approved language specification,” and section 3 defers editor integration. So I cannot write “the page accepts `lam` / `fix` / `let`” as if Hongwei signed off.
+**Me:** The biggest hole is syntax. The brief still talks about Python ASTs. I then read `lectures/lecture-09-22/README.md` and `lambda-concrete-syntax-requirements.md`. The README says there is still no parser. The syntax writeup says “Draft for discussion” and “not an approved language specification,” and section 3 defers editor integration. So I cannot write “the page accepts `lam` / `fix` / `let`” as if professor Hongwei signed off.
 
 **Assistant:** Send the buffer as text. Say the compiler owns the notation. Until a parser exists, only the sample backend is real, and label it. Candidate spellings from Sep 22 can appear as sample example text, not as a frozen grammar.
 
@@ -74,7 +74,7 @@ I did not ask for a finished specification in one prompt. I went through the sta
 
 ## 6. Traceability and review
 
-**Me:** Every ID should point at a brief passage, a lecture note, or an assumption. Lecture notes are context. They are not “Hongwei answered Q1.”
+**Me:** Every ID should point at a brief passage, a lecture note, or an assumption. Lecture notes are context. They are not “professor Hongwei answered Q1.”
 
 **Assistant:** Mapped FR-01–FR-18 and QR-01–QR-05. FR-08 and FR-09 cite ERR-01, ERR-02, and ERR-04. FR-13 cites the deferred editor integration.
 

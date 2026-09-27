@@ -22,7 +22,7 @@ Provide a local, browser-based environment where a course participant can edit a
 | --- | --- |
 | Student writing programs | Start from an example, edit, run, and understand errors without installing language tools by hand. |
 | Student changing the compiler | Re-run a saved collection of tests after a compiler change and see which cases still match their expected outcomes. |
-| Instructor in lecture | Open a known example, change an input, and show the new result without losing the original example or waiting on interface setup. |
+| Professor Hongwei in lecture | Open a known example, change an input, and show the new result without losing the original example or waiting on interface setup. |
 | Compiler provider | Offer a stable request/response interface. Building the compiler is outside this project. |
 
 ## 3. System boundary and scope
@@ -70,7 +70,7 @@ The brief says the user sometimes only wants to know whether a program compiles.
 
 **Q6. Which browsers must work?**  
 The brief says “a browser students normally use” and does not name products.  
-**Assumption A6 (proposal):** Current versions of Chrome, Firefox, Edge, and Safari on the instructor’s and students’ own machines. One active page is supported. Two tabs editing the same stored collection may overwrite each other; that limit is documented in setup notes, not treated as a feature.
+**Assumption A6 (proposal):** Current versions of Chrome, Firefox, Edge, and Safari on professor Hongwei’s and students’ own machines. One active page is supported. Two tabs editing the same stored collection may overwrite each other; that limit is documented in setup notes, not treated as a feature.
 
 **Q7. May sample compiler output appear in lecture?**  
 The brief allows sample responses before the compiler exists, if they cannot be mistaken for real results.  
@@ -181,6 +181,6 @@ These are future checks, not results from a built system.
 
 **Issue 2.** Check and Run were one button. That conflicts with the brief’s split between “does it compile” and “what does it return.” FR-06 and FR-07 are separate, and FR-07 does not show an execution value when compilation fails.
 
-**Issue 3.** Persistence and class sharing were easy to merge. The brief treats sharing as optional and treats losing examples on refresh as unacceptable. FR-16 is in version 1; sharing stays out of scope. Export (FR-18) is only a should, so version 1 does not depend on a file format the stakeholder has not chosen.
+**Issue 3.** Persistence and class sharing were easy to merge. The brief treats sharing as optional and treats losing examples on refresh as unacceptable. FR-16 is in version 1; sharing stays out of scope. Export (FR-18) is only a should, so version 1 does not depend on a file format professor Hongwei has not chosen.
 
 **Issue 4.** Sample results could satisfy a demo while looking like real compiler output. FR-17 requires the sample label on every such result and the same actions when the real adapter is attached.
