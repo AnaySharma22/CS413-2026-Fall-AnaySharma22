@@ -2,8 +2,6 @@
 
 AI system: Cursor, in this repository.
 
-I did not ask for a finished specification in one prompt. I went through the stakeholder brief with the assistant one piece at a time, then checked the class lecture notes before locking wording. Unrelated earlier work (Lab 1, Assignments 1 and 2) is left out.
-
 ## 1. Stakeholders and scope
 
 **Me:** The brief lists students who write programs, students who change the compiler, and me using it in lecture. Is the compiler team a user or just a dependency?
