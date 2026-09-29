@@ -26,9 +26,9 @@ I did not ask for a finished specification in one prompt. I went through the sta
 
 **Me:** The biggest hole is syntax. The brief still talks about Python ASTs. I then read `lectures/lecture-09-22/README.md` and `lambda-concrete-syntax-requirements.md`. The README says there is still no parser. The syntax writeup says “Draft for discussion” and “not an approved language specification,” and section 3 defers editor integration. So I cannot write “the page accepts `lam` / `fix` / `let`” as if professor Hongwei signed off.
 
-**Assistant:** Send the buffer as text. Say the compiler owns the notation. Until a parser exists, only the sample backend is real, and label it. Candidate spellings from Sep 22 can appear as sample example text, not as a frozen grammar.
+**Assistant:** Send the buffer as text. Say the compiler owns the notation. Until a parser exists, demonstrations use the sample backend and label it. The Compiler backend keeps the same actions. Candidate spellings from Sep 22 can appear as sample example text, not as a frozen grammar.
 
-**Me:** Storage is the next hole. No accounts, but refresh must not wipe examples. I am assuming browser-profile storage plus import/export, and I will mark that as my assumption.
+**Me:** Storage is the next hole. No accounts, but refresh must not wipe examples. I am assuming browser-profile storage. Opening a local file is required; exporting the whole collection can wait.
 
 **Me:** Timeout versus cancel. The brief only says I need a way to stop a run that might not finish. I am not going to invent a 5-second limit. Cancel is required. Automatic timeout stays unresolved.
 
@@ -58,9 +58,9 @@ I did not ask for a finished specification in one prompt. I went through the sta
 
 **Assistant:** Keyboard paths for the main actions are already in the brief, so that can be a must without a made-up number. Color-only messages too. For speed, split UI actions from compiler time, and label any millisecond target as a proposal. Same for a setup-time target.
 
-**Me:** I’ll use 200 ms for non-compiler actions and 15 minutes to open the page and run one example, both marked as my proposals (A8, A9). Compiler time is excluded. Persistence after reload is a real check, so that stays a must without a fake metric.
+**Me:** I’ll use 200 ms for non-compiler actions and 15 minutes to open the page and run one example, both marked as my proposals (A8, A9). Compiler time is excluded. Persistence after reload is already FR-16, so I will not copy it into a quality requirement.
 
-**What I kept:** QR-01 through QR-05.
+**What I kept:** QR-01 through QR-04.
 
 ## 5. Acceptance checks
 
@@ -70,13 +70,13 @@ I did not ask for a finished specification in one prompt. I went through the sta
 
 **Me:** AC-4, AC-5, AC-6, and AC-7 are the failure or exceptional ones. I dropped a check that required the factorial source to parse, because that would pretend the Sep 22 grammar is approved. The factorial name can stay as a built-in example title.
 
-**What I kept:** AC-1 through AC-8.
+**What I kept:** AC-1 through AC-9. AC-9 checks that a sample result is labeled as sample.
 
 ## 6. Traceability and review
 
 **Me:** Every ID should point at a brief passage, a lecture note, or an assumption. Lecture notes are context. They are not “professor Hongwei answered Q1.”
 
-**Assistant:** Mapped FR-01–FR-18 and QR-01–QR-05. FR-08 and FR-09 cite ERR-01, ERR-02, and ERR-04. FR-13 cites the deferred editor integration.
+**Assistant:** Mapped FR-01–FR-18 and QR-01–QR-04. FR-08 and FR-09 cite ERR-01, ERR-02, and ERR-04. FR-13 cites the deferred editor integration.
 
 **Me:** Review of my own draft:
 

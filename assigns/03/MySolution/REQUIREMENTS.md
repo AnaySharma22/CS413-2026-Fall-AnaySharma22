@@ -10,7 +10,7 @@ Course notes used for context, not as stakeholder decisions:
 - `lectures/lecture-09-15/compiler_development.md` (compiler phases stay a separate project)
 - `lectures/lecture-09-17/README.00` (agile: settle a small first version before adding more)
 
-Status: first-version specification. No stakeholder answers have been received beyond the brief. Assumptions below are proposals, not stakeholder decisions.
+Status: first-version specification. No stakeholder answers have been received beyond the brief. Assumptions below are mine, not stakeholder decisions.
 
 ## 1. Purpose
 
@@ -50,11 +50,11 @@ No replies have been received. Each item states why it matters and how this spec
 
 **Q1. What source notation does version 1 accept?**  
 The brief says programs are still discussed as Python ASTs and that concrete syntax is unsettled. The Sep 22 notes agree: `lambda1.py` still builds ASTs in Python, and `lambda-concrete-syntax-requirements.md` is labeled “Draft for discussion,” with spellings that are “examples for review, not an approved language specification.” That draft also lists editor integration as deferred (section 3). The editor, examples, file import, and tests all depend on the text the compiler accepts.  
-**Assumption A1:** Version 1 sends the editor buffer as text and does not choose the grammar. The compiler interface defines the notation. Until a notation is fixed, only the sample backend is used, and the page states that. Built-in examples may use the candidate forms from the Sep 22 notes (`lam`, `fix`, `let` … `end`) only as sample text, not as a claim that the syntax is approved.
+**Assumption A1:** Version 1 sends the editor buffer as text and does not choose the grammar. The compiler interface defines the notation. Demonstrations before a notation is fixed use the sample backend, and the page states that. The Compiler backend uses the same actions once that interface is connected. Built-in examples may use the candidate forms from the Sep 22 notes (`lam`, `fix`, `let` … `end`) only as sample text, not as a claim that the syntax is approved.
 
 **Q2. Where should programs and tests live if there are no accounts?**  
 Refresh and a later session must not drop prepared examples, but the brief does not name a store.  
-**Assumption A2:** Data is stored in the browser profile on that machine (local storage or an equivalent browser store). Import and export of a file are also required so a program can move without retyping.
+**Assumption A2:** Data is stored in the browser profile on that machine (local storage or an equivalent browser store). Opening a program from a local file is required so a student does not retype it. Downloading the test collection can wait; no file format has been chosen.
 
 **Q3. Must a long run stop by itself, or only when the user cancels?**  
 The brief requires a way to stop a run that may not finish. It does not set a time limit.  
@@ -109,9 +109,8 @@ Targets marked as proposals are not in the brief.
 | --- | --- | --- |
 | QR-01 | M | Check, Run, Cancel, load-example, save, and run-all-tests can each be invoked with the keyboard alone, without a pointer. |
 | QR-02 | M | Compile error, runtime failure, environment failure, pass, and fail are each identified by text. Color may be added but is not the only signal. |
-| QR-03 | M | **Proposal A8:** On a reference laptop (current mid-range student machine), loading an example, switching the inspector, and updating the editor do not wait on the compiler and become visible within 200 ms. A compiler request may take longer; during that time the page still accepts edit and Cancel (FR-11). |
+| QR-03 | M | **Proposal A8:** On a reference laptop (current mid-range student machine), loading an example and updating the editor do not wait on the compiler and become visible within 200 ms. A compiler request may take longer; during that time the page still accepts edit and Cancel (FR-11). |
 | QR-04 | M | **Proposal A9:** A person who has the setup notes and a supported browser can open the page and run one built-in example within 15 minutes, without reading compiler source. |
-| QR-05 | M | After a reload, the last saved editor text and all saved tests from that profile are unchanged (same names, source, and expectations). |
 
 ## 7. External interfaces
 
@@ -125,7 +124,7 @@ The compiler project is a separate effort. This environment does not require a f
 
 ## 8. Priorities
 
-Version 1 must include FR-01–FR-12, FR-14–FR-17, and QR-01–QR-05. Inspector detail (FR-13) and file export of the whole collection (FR-18) should be included if time remains; they are not required to satisfy the lecture and regression stories. Class sharing, accounts, hosted deployment, and collaborative editing wait, matching the brief.
+Version 1 must include FR-01–FR-12, FR-14–FR-17, and QR-01–QR-04. Inspector detail (FR-13) and file export of the whole collection (FR-18) should be included if time remains; they are not required to satisfy the lecture and regression stories. Class sharing, accounts, hosted deployment, and collaborative editing wait, matching the brief.
 
 ## 9. Acceptance checks
 
@@ -146,6 +145,8 @@ These are future checks, not results from a built system.
 **AC-7 (FR-15), exceptional.** Collection has three tests; the second expects integer 1 but the compiler returns 2. Expected: the summary reports 2 passed and 1 failed; the second test shows expected 1 and actual 2; the third test still has a pass or fail result.
 
 **AC-8 (FR-16), normal.** Save a program and two tests. Reload the page. Expected: the saved program and both tests are listed with the same source and expectations.
+
+**AC-9 (FR-17), normal.** Sample mode is active. Load a built-in example and choose Run. Expected: the result is labeled “sample, not a compiler result.” Check, Run, and run-all-tests stay the same actions when the Compiler backend is selected.
 
 ## 10. Traceability
 
@@ -173,7 +174,6 @@ These are future checks, not results from a built system.
 | QR-02 | “messages should make sense without depending only on colors.” |
 | QR-03 | “respond promptly” while the compiler may take longer; proposal A8. |
 | QR-04 | “easy to get started”; “setup should be straightforward”; proposal A9. |
-| QR-05 | Same passages as FR-16. |
 
 ## 11. Review notes
 
