@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>LAMBDA workbench</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <h1>LAMBDA workbench</h1>
+  <p id="status" role="status" aria-live="polite">Idle. No source applied.</p>
+
+  <label for="load-menu">Load source</label>
+  <select id="load-menu">
+    <option value="">Choose an action</option>
+    <option value="file">Choose File</option>
+    <option value="manual">Manual input</option>
+    <option value="Factorial">Factorial (canned)</option>
+    <option value="Fibonacci">Fibonacci (canned)</option>
+  </select>
+  <input id="file" type="file" accept=".lambda,text/plain" hidden>
+
+  <p>Source name: <span id="source-name">none</span>. Revision: <span id="revision">0</span>.</p>
+
+  <label for="editor">Editor</label>
+  <textarea id="editor" spellcheck="false" aria-describedby="format-note"></textarea>
+  <p id="format-note">Input is one Python constructor expression, such as D0Eop2("+", D0Eint(20), D0Eint(22)). Comments and line breaks are allowed. The limit is 65,536 UTF-8 bytes. Each tool stops after 3 seconds.</p>
+
+  <p>
+    <button type="button" id="apply">Apply changes</button>
+    <button type="button" id="discard">Discard changes</button>
+  </p>
+  <p>
+    <button type="button" id="lint">Lint</button>
+    <button type="button" id="interpret">Interpret</button>
+    <button type="button" id="typecheck">Type-check</button>
+    <button type="button" id="compile">Compile</button>
+    <button type="button" id="execute" disabled>Execute</button>
+  </p>
+  <p id="execute-note">Execute is for generated code and is unavailable until compilation is implemented and produces an artifact.</p>
+
+  <h2>Result</h2>
+  <p id="result-meta">No result.</p>
+  <pre id="result"></pre>
+
+  <script src="/app.js"></script>
+</body>
+</html>

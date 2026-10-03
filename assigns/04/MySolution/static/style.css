@@ -1,0 +1,30 @@
+body {
+  font-family: Georgia, serif;
+  max-width: 46rem;
+  margin: 1.5rem auto;
+  line-height: 1.4;
+}
+
+textarea, pre, button, select {
+  font-family: Consolas, "Courier New", monospace;
+}
+
+textarea, pre {
+  width: 100%;
+  box-sizing: border-box;
+  white-space: pre-wrap;
+}
+
+textarea {
+  min-height: 14rem;
+}
+
+pre {
+  min-height: 4rem;
+  border: 1px solid #444;
+  padding: 0.5rem;
+}
+
+button:disabled, select:disabled, textarea:disabled {
+  opacity: 0.65;
+}
