@@ -1,0 +1,1 @@
+((((lam t. (lam f. f)) (lam k_1. (lam t. (lam f. t)))) (lam k_2. (lam t. (lam f. t)))) (lam w. w))
