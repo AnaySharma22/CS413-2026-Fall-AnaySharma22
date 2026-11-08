@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/AnaySharma22/CS413-2026-Fall-AnaySharma22/assigns/07/MySolution/schema/jsonrpc.schema.json",
+  "title": "LAMBDA3 JSON-RPC 2.0 service, POST /rpc",
+  "description": "Shapes of the request and response bodies. Context-dependent rules (invalid requests answer with id null, size and time limits) are in RPC.md.",
+  "$defs": {
+    "id": {
+      "description": "Request id. Booleans are not valid ids.",
+      "type": ["string", "number", "null"]
+    },
+    "library": {
+      "enum": ["list", "optn", "a1sz", "strm"]
+    },
+    "libraries": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/library" },
+      "uniqueItems": true
+    },
+    "source": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S",
+      "description": "LAMBDA3 source text. At most 65,536 UTF-8 bytes (byte limits cannot be expressed in JSON Schema; see RPC.md)."
+    },
+
+    "healthParams": {
+      "type": "object",
+      "additionalProperties": false
+    },
+    "sourceParams": {
+      "type": "object",
+      "required": ["source"],
+      "properties": {
+        "source": { "$ref": "#/$defs/source" },
+        "libraries": { "$ref": "#/$defs/libraries" }
+      },
+      "additionalProperties": false
+    },
+    "compileParams": {
+      "type": "object",
+      "required": ["source", "target"],
+      "properties": {
+        "source": { "$ref": "#/$defs/source" },
+        "target": { "enum": ["python", "javascript"] },
+        "libraries": { "$ref": "#/$defs/libraries" }
+      },
+      "additionalProperties": false
+    },
+
+    "request": {
+      "type": "object",
+      "required": ["jsonrpc", "method"],
+      "properties": {
+        "jsonrpc": { "const": "2.0" },
+        "method": { "type": "string" },
+        "params": { "type": ["object", "array"] },
+        "id": { "$ref": "#/$defs/id" }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": { "properties": { "method": { "const": "service.health" } }, "required": ["method"] },
+          "then": { "properties": { "params": { "$ref": "#/$defs/healthParams" } } }
+        },
+        {
+          "if": { "properties": { "method": { "enum": ["lambda.typecheck", "lambda.interpret"] } }, "required": ["method"] },
+          "then": { "required": ["params"], "properties": { "params": { "$ref": "#/$defs/sourceParams" } } }
+        },
+        {
+          "if": { "properties": { "method": { "const": "lambda.compile" } }, "required": ["method"] },
+          "then": { "required": ["params"], "properties": { "params": { "$ref": "#/$defs/compileParams" } } }
+        }
+      ]
+    },
+    "requestBody": {
+      "oneOf": [
+        { "$ref": "#/$defs/request" },
+        { "type": "array", "minItems": 1, "maxItems": 20, "items": { "$ref": "#/$defs/request" } }
+      ]
+    },
+
+    "healthResult": {
+      "type": "object",
+      "required": ["status", "version"],
+      "properties": {
+        "status": { "const": "ok" },
+        "version": { "const": "1.0" }
+      },
+      "additionalProperties": false
+    },
+    "typecheckResult": {
+      "type": "object",
+      "required": ["type"],
+      "properties": { "type": { "type": "string" } },
+      "additionalProperties": false
+    },
+    "interpretResult": {
+      "type": "object",
+      "required": ["type", "value"],
+      "properties": {
+        "type": { "type": "string" },
+        "value": { "type": "string", "description": "d0val_format output; functions are <lam> or <fix>." },
+        "output": { "type": "string", "description": "Text printed by the program. Present only if it printed." },
+        "output_truncated": { "const": true }
+      },
+      "additionalProperties": false
+    },
+    "compileResult": {
+      "type": "object",
+      "required": ["target", "code"],
+      "properties": {
+        "target": { "enum": ["python", "javascript"] },
+        "code": { "type": "string", "minLength": 1, "description": "Generated program, returned unchanged and never executed by the service." }
+      },
+      "additionalProperties": false
+    },
+
+    "error": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": {
+          "type": "integer",
+          "enum": [-32700, -32600, -32601, -32602, -32603, -32010, -32011, -32012, -32013, -32014]
+        },
+        "message": { "type": "string" },
+        "data": { "type": "object" }
+      },
+      "additionalProperties": false
+    },
+    "successResponse": {
+      "type": "object",
+      "required": ["jsonrpc", "id", "result"],
+      "properties": {
+        "jsonrpc": { "const": "2.0" },
+        "id": { "$ref": "#/$defs/id" },
+        "result": {
+          "anyOf": [
+            { "$ref": "#/$defs/healthResult" },
+            { "$ref": "#/$defs/typecheckResult" },
+            { "$ref": "#/$defs/interpretResult" },
+            { "$ref": "#/$defs/compileResult" }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "errorResponse": {
+      "type": "object",
+      "required": ["jsonrpc", "id", "error"],
+      "properties": {
+        "jsonrpc": { "const": "2.0" },
+        "id": { "$ref": "#/$defs/id" },
+        "error": { "$ref": "#/$defs/error" }
+      },
+      "additionalProperties": false
+    },
+    "response": {
+      "oneOf": [
+        { "$ref": "#/$defs/successResponse" },
+        { "$ref": "#/$defs/errorResponse" }
+      ]
+    },
+    "responseBody": {
+      "description": "Body of an HTTP 200 answer. HTTP 204 answers have no body.",
+      "oneOf": [
+        { "$ref": "#/$defs/response" },
+        { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/response" } }
+      ]
+    }
+  },
+  "oneOf": [
+    { "$ref": "#/$defs/requestBody" },
+    { "$ref": "#/$defs/responseBody" }
+  ]
+}
