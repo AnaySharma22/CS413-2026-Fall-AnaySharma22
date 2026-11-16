@@ -1,0 +1,103 @@
+# CPS N-Queens search that produces a lazy stream of events.
+# Board: List[sint], newest row's column at the head.
+# Event: (kind, column, row, board)
+#   kind 0=try 1=place 2=reject 3=backtrack 4=solution 5=done
+# queens_stream(size) only builds a suspended computation. Forcing a cell
+# runs enough CPS work to emit one event and install the next lazy tail.
+
+queens_stream : sint -> Strm[(sint, sint, sint, List[sint])] = lam (size: sint) =>
+  let
+    emit :
+      ((sint, sint, sint, List[sint]),
+       unit -> Strm[(sint, sint, sint, List[sint])]) ->
+      Strm[(sint, sint, sint, List[sint])] =
+      lam (p) =>
+        lazy_make(lam (u: unit) =>
+          stcn_cons(p.0, lazy_make(lam (v: unit) => lazy_eval(p.1()))));
+
+    empty_board : List[sint] = list_nil();
+
+    check_safe :
+      (sint, sint, List[sint],
+       unit -> Strm[(sint, sint, sint, List[sint])],
+       unit -> Strm[(sint, sint, sint, List[sint])]) ->
+      Strm[(sint, sint, sint, List[sint])] =
+      fix check(state): Strm[(sint, sint, sint, List[sint])] =>
+        let
+          column = state.0;
+          distance = state.1;
+          board = state.2;
+          on_safe = state.3;
+          on_conflict = state.4
+        in
+          if list_nilq(board) then on_safe()
+          else
+            let previous = list_head(board)
+            in
+              if previous == column then on_conflict()
+              else if previous == column - distance then on_conflict()
+              else if previous == column + distance then on_conflict()
+              else check(column, distance + 1, list_tail(board), on_safe, on_conflict)
+            end
+        end;
+
+    on_solution :
+      (List[sint], unit -> Strm[(sint, sint, sint, List[sint])]) ->
+      Strm[(sint, sint, sint, List[sint])] =
+      lam (p) => emit((4, 0, 0, p.0), p.1);
+
+    root_exhausted : unit -> Strm[(sint, sint, sint, List[sint])] =
+      lam (u: unit) =>
+        emit((5, 0, 0, empty_board), lam (v: unit) =>
+          lazy_make(lam (w: unit) => stcn_nil()));
+
+    search :
+      (sint, List[sint],
+       (List[sint], unit -> Strm[(sint, sint, sint, List[sint])]) ->
+         Strm[(sint, sint, sint, List[sint])],
+       unit -> Strm[(sint, sint, sint, List[sint])]) ->
+      Strm[(sint, sint, sint, List[sint])] =
+      fix search_row(state): Strm[(sint, sint, sint, List[sint])] =>
+        let
+          row = state.0;
+          board = state.1;
+          on_sol = state.2;
+          on_exh = state.3;
+          try_column :
+            (sint, sint, List[sint],
+             (List[sint], unit -> Strm[(sint, sint, sint, List[sint])]) ->
+               Strm[(sint, sint, sint, List[sint])],
+             unit -> Strm[(sint, sint, sint, List[sint])]) ->
+            Strm[(sint, sint, sint, List[sint])] =
+            fix try_col(tstate): Strm[(sint, sint, sint, List[sint])] =>
+              let
+                trow = tstate.0;
+                column = tstate.1;
+                tboard = tstate.2;
+                ton_sol = tstate.3;
+                ton_exh = tstate.4
+              in
+                if column == size then ton_exh()
+                else
+                  emit((0, column, trow, tboard), lam (u: unit) =>
+                    check_safe(column, 1, tboard,
+                      lam (v: unit) =>
+                        let next_board = list_cons(column, tboard)
+                        in
+                          emit((1, column, trow, next_board), lam (w: unit) =>
+                            search_row(trow + 1, next_board, ton_sol,
+                              lam (x: unit) =>
+                                emit((3, column, trow, tboard), lam (y: unit) =>
+                                  try_col(trow, column + 1, tboard, ton_sol, ton_exh))))
+                        end,
+                      lam (v: unit) =>
+                        emit((2, column, trow, tboard), lam (w: unit) =>
+                          try_col(trow, column + 1, tboard, ton_sol, ton_exh))))
+              end
+        in
+          if row == size then on_sol(board, on_exh)
+          else try_column(row, 0, board, on_sol, on_exh)
+        end
+  in
+    search(0, empty_board, on_solution, root_exhausted)
+  end

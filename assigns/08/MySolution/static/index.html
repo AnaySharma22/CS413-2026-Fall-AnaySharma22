@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>N-Queens CPS stream</title>
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <main class="layout">
+    <header class="hero">
+      <p class="brand">N-Queens</p>
+      <h1>CPS search, lazy stream, live board</h1>
+      <p class="lede">
+        Each step is one event from a LAMBDA3 continuation-passing search.
+        The browser asks for the next events only when playback needs them.
+      </p>
+    </header>
+
+    <section class="stage" aria-label="Board and controls">
+      <div class="board-wrap">
+        <div id="board" class="board" role="grid" aria-label="Chessboard"></div>
+        <p id="status" class="status">Idle. Press Start to open a stream.</p>
+      </div>
+
+      <aside class="panel">
+        <label class="field">
+          Size
+          <select id="size">
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8" selected>8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+          </select>
+        </label>
+        <label class="field">
+          Speed (ms)
+          <input id="speed" type="range" min="20" max="800" value="120">
+          <span id="speed-label">120</span>
+        </label>
+        <div class="controls">
+          <button type="button" id="start">Start</button>
+          <button type="button" id="step" disabled>Step</button>
+          <button type="button" id="play" disabled>Play</button>
+          <button type="button" id="pause" disabled>Pause</button>
+          <button type="button" id="next-solution" disabled>Next solution</button>
+          <button type="button" id="reset" disabled>Reset</button>
+        </div>
+        <dl class="stats">
+          <div><dt>Solutions</dt><dd id="solutions">0</dd></div>
+          <div><dt>Events</dt><dd id="events">0</dd></div>
+          <div><dt>Stream</dt><dd id="stream-state">closed</dd></div>
+        </dl>
+        <p id="error" class="error" hidden></p>
+        <h2 class="log-title">Event log</h2>
+        <ol id="log" class="log" reversed></ol>
+      </aside>
+    </section>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>
